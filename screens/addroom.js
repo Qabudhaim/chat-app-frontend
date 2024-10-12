@@ -13,9 +13,18 @@ export default function AddRoom({ navigation }) {
         setQuery(text);
     }
 
+    handleTitlePress = () => {
+        setUsers([]);
+        setQuery('');
+        this.searchField.clear();
+        navigation.navigate('Rooms');
+    }
+
     createRoom = (user_id) => {
 
-        url = 'http://192.168.178.56:8000/api/create-room/'
+        this.searchField.clear();
+
+        url = global.publicUrl + ':8000/api/create-room/'
         headers = {
             'Authorization': 'Bearer ' + global.app.accessToken,
             'Content-Type': 'application/json'
@@ -36,7 +45,11 @@ export default function AddRoom({ navigation }) {
 
     useEffect(() => {
 
-        url = 'http://192.168.178.56:8000/api/filter-users/'
+        navigation.setOptions({
+            title: <Text onPress={handleTitlePress} className='text-2xl text-red-600'>Create a Room</Text>,
+        });
+
+        url = global.publicUrl + ':8000/api/filter-users/'
         headers = {
             'Authorization': 'Bearer ' + global.app.accessToken,
             'Content-Type': 'application/json'
@@ -59,29 +72,25 @@ export default function AddRoom({ navigation }) {
     }, [query]);
 
     return (
-        <TouchableWithoutFeedback onPress={() => {
-            Keyboard.dismiss();
-        }}>
-            <KeyboardAvoidingView boardAvoidingView behavior="padding" className="flex-1 items-center justify-center bg-zinc-100">
-                <View className='p-3 m-3 w-96'>
-                    <TextInput onChangeText={handleQuery} placeholder='Email or Phone' className="border rounded-md p-3 border-red-600 text-sm" />
-                </View>
-                <FlatList
-                    data={users}
-                    renderItem={({ item }) => (
-                        <TouchableWithoutFeedback onPress={() => this.createRoom(item.id)}>
-                            <View className='p-3 m-2 w-80 bg-zinc-50 rounded-lg shadow-sm'>
-                                <Text className="text-red-600">{item.username}</Text>
-                                <Text className="text-red-600 font-thin">{item.phone_number}</Text>
-                            </View>
-                        </TouchableWithoutFeedback>
-                    )}
-                    keyExtractor={item => item.id.toString()}
-                >
+        <KeyboardAvoidingView boardAvoidingView behavior="padding" className="flex-1 items-center justify-center bg-zinc-100">
+            <View className='p-3 m-3 w-96'>
+                <TextInput ref={ref => this.searchField = ref} onChangeText={handleQuery} placeholder='Email or Phone' className="border rounded-md p-3 border-red-600 text-sm" />
+            </View>
+            <FlatList
+                data={users}
+                renderItem={({ item }) => (
+                    <TouchableWithoutFeedback onPress={() => this.createRoom(item.id)}>
+                        <View className='p-3 m-2 w-80 bg-zinc-50 rounded-lg shadow-sm'>
+                            <Text className="text-red-600">{item.username}</Text>
+                            <Text className="text-red-600 font-thin">{item.phone_number}</Text>
+                        </View>
+                    </TouchableWithoutFeedback>
+                )}
+                keyExtractor={item => item.id.toString()}
+            >
 
-                </FlatList>
-            </KeyboardAvoidingView>
-        </TouchableWithoutFeedback>
+            </FlatList>
+        </KeyboardAvoidingView>
     )
 };
 

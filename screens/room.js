@@ -11,25 +11,20 @@ export default function Room({ navigation, route }) {
 
     // const ws = new WebSocket('ws://192.168.178.56:8000/ws/chat/' + route.params.room.hash_number + '/?token=' + global.app.accessToken);
 
-    const ws_url = 'ws://192.168.178.56:8000/ws/chat/' + route.params.room.hash_number + '/?token=' + global.app.accessToken;
+    const ws_url = global.publicWs + ':8000/ws/chat/' + route.params.room.hash_number + '/?token=' + global.app.accessToken;
 
     const [isLoading, setIsLoading] = useState(true);
     const [messages, setMessages] = useState([]);
     const [room, setRoom] = useState([]);
     const [message, setMessage] = useState('');
     const [maxId, setMaxId] = useState(0);
-    const [update, setUpdate] = useState(false);
+    const [update, setUpdate] = useState('');
 
     handleTitlePress = () => {
         setMessages([]);
         setIsLoading(true);
         navigation.navigate('Rooms');
     }
-
-
-    navigation.setOptions({
-        title: <Text onPress={handleTitlePress} className='text-2xl text-red-600'>{route.params.room.users[0].username === user.username ? route.params.room.users[1].username : route.params.room.users[0].username}</Text>,
-    });
 
 
 
@@ -45,7 +40,7 @@ export default function Room({ navigation, route }) {
         }));
 
 
-        url = 'http://192.168.178.56:8000/api/send-message/'
+        url = global.publicUrl + ':8000/api/send-message/'
         headers
             = {
             'Authorization': 'Bearer ' + global.app.accessToken,
@@ -59,7 +54,8 @@ export default function Room({ navigation, route }) {
 
         axios.post(url, data, { headers: headers })
             .then(function (response) {
-                setUpdate(true);
+                // setUpdate(true);
+                setUpdate(response.data);
             })
             .catch(function (error) {
                 console.log(error);
@@ -77,9 +73,14 @@ export default function Room({ navigation, route }) {
     }
 
     useEffect(() => {
+
+        navigation.setOptions({
+            title: <Text onPress={handleTitlePress} className='text-2xl text-red-600'>{route.params.room.users[0].username === user.username ? route.params.room.users[1].username : route.params.room.users[0].username}</Text>,
+        });
+
         setRoom(route.params.room);
 
-        url = 'http://192.168.178.56:8000/api/messages/'
+        url = global.publicUrl + ':8000/api/messages/'
         headers = {
             'Authorization': 'Bearer ' + global.app.accessToken,
             'Content-Type': 'application/json'
@@ -93,7 +94,7 @@ export default function Room({ navigation, route }) {
             .then(function (response) {
                 setMessages(response.data.messages);
                 setIsLoading(false);
-                setUpdate(false);
+                // setUpdate(false);
 
             })
             .catch(function (error) {
@@ -123,7 +124,7 @@ export default function Room({ navigation, route }) {
                 onMessage={(msg) => {
                     route.params.room.users.forEach(user => {
                         if (user.id !== global.app.user.id) {
-                            setUpdate(true);
+                            setUpdate(msg.data);
                         }
                     });
 

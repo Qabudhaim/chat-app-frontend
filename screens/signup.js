@@ -93,7 +93,7 @@ export default function SignUp({ navigation }) {
         setIsLoading(true);
         setIsInvalid(false);
 
-        axios.post('http://192.168.178.56:8000/register/', {
+        axios.post(global.publicUrl + ':8000/register/', {
             username: username,
             password: password,
             first_name: firstName,

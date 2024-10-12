@@ -74,7 +74,7 @@ export default function App() {
 
       if (data.access && data.refresh && data.user) {
 
-        axios.get('http://192.168.178.56:8000/whoami/', {
+        axios.get(global.publicUrl + ':8000/whoami/', {
           headers: {
             'Authorization': 'Bearer ' + data.access
           }

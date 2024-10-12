@@ -50,7 +50,7 @@ export default function SignIn({ navigation }) {
         setIsLoading(true);
         setIsInvalid(false);
 
-        axios.post('http://192.168.178.56:8000/login/', {
+        axios.post(global.publicUrl + ':8000/login/', {
             username: username,
             password: password
         })

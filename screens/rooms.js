@@ -23,17 +23,6 @@ export default function Rooms({ navigation }) {
     setIsLoading(true);
   }
 
-  navigation.setOptions({
-    title: <Text onPress={handleTitlePress} className='text-2xl text-red-600'>Chats</Text>,
-
-    headerRight: () => (
-      <TouchableWithoutFeedback onPress={() => { navigation.navigate('AddRoom') }}>
-        <View className='p-2'>
-          <AntDesign name="plus" size={24} color="#e53935" />
-        </View>
-      </TouchableWithoutFeedback>
-    ),
-  });
 
   const handleLogout = () => {
     removeKey('access');
@@ -53,7 +42,19 @@ export default function Rooms({ navigation }) {
   useFocusEffect(
     React.useCallback(() => {
 
-      axios.get('http://192.168.178.56:8000/api/list-rooms-and-messages/', {
+      navigation.setOptions({
+        title: <Text className='text-2xl text-red-600'>Chats</Text>,
+
+        headerRight: () => (
+          <TouchableWithoutFeedback onPress={() => { navigation.navigate('AddRoom') }}>
+            <View className='p-2'>
+              <AntDesign name="plus" size={24} color="#e53935" />
+            </View>
+          </TouchableWithoutFeedback>
+        ),
+      });
+
+      axios.get(global.publicUrl + ':8000/api/list-rooms-and-messages/', {
         headers: {
           'Authorization': 'Bearer ' + global.app.accessToken
         }
